@@ -22,7 +22,7 @@ QtVideo::~QtVideo()
 //menu
 void QtVideo::on_openFille_triggered()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Открыть файл"), QDir::currentPath(), tr("*.mkv *.webm"));
+    QString path = QFileDialog::getOpenFileName(this, tr("Открыть файл"), QDir::currentPath(), tr("*.mkv *.webm *.mp4"));
     auto path2 = "file:///"+path;
     if(!path.isEmpty())
     {
