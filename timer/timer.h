@@ -1,28 +1,21 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include <QObject>
-#include <QWidget>
 #include "gst/gst.h"
 
-class Timer : public QObject{
-    Q_OBJECT
-    GstClock * _clock;
+class Timer {
+    GstClock* _clock;
     GstClockID _clockID;
+    GstClockCallback _sendSignal;
+    gpointer _user_data;
     enum TimerFlags {
         TIMER_FLAG_PAUSE = 0
     };
-    static GstClockReturn sendSignal(GstClock *clock, GstClockTime time,GstClockID id, Timer * timer);
 public:
-    Timer(GstClock * clock);
+    Timer(GstClock* clock, GstClockCallback sendSignal, gpointer user_data);
     void start();
     void pause();
     ~Timer();
-public slots:
-
-Q_SIGNALS:
-    void timeout();
 };
-
 
 #endif //TIMER_H

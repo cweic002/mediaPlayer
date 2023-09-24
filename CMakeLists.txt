@@ -19,10 +19,11 @@ find_gstreamer_component(gstvideo gstreamer-video-1.0 gstvideo-1.0)
 find_gstreamer_component(gstvideo gstreamer-video-1.0 gstvideo-1.0)
 find_gstreamer_component(glib glib-2.0 glib-2.0)
 find_gstreamer_component(gstgobject gobject-2.0 gobject-2.0)
+find_gstreamer_component(intl gstreamer-1.0 intl)
+find_gstreamer_component(gthread gstreamer-1.0 gthread-2.0)
 
-message(STATUS "inc: ${gstreamer_INCLUDE_DIRS}")
-message(STATUS "lib: ${gstreamer_LIBRARIES}")
-
+# message(STATUS "inc: ${gstreamer_INCLUDE_DIRS}")
+# message(STATUS "lib: ${gstreamer_LIBRARIES}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -37,27 +38,49 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 
 set(TS_FILES videoPlayer_ru_RU.ts)
+qt5_add_resources(videoPlayerResourse videoPlayerApp.qrc)
+
+add_library(libTimer "timer/timer.h" "timer/timer.cpp")
+
+add_library(libPlayer "player/player.h" "player/player.cpp" "player/playerException.h" "player/playerException.cpp")
+
+# add_library(libPlayer "player/player.h" "player/player.cpp" )
+# add_library(libPlayerException "player/playerException.h" "player/playerException.cpp")
+
+add_library(libVideoPlayer "videoPlayer/videoPlayer.h" "videoPlayer/videoPlayer.cpp")
+
+target_link_libraries(libTimer PRIVATE
+   ${gstreamer_LIBRARIES}
+)
+
+target_link_libraries(libVideoPlayer 
+PUBLIC Qt${QT_VERSION_MAJOR}::Widgets
+PUBLIC libPlayer
+PRIVATE libTimer
+)
 
 set(PROJECT_SOURCES
         sliderPlayer.h
-        player/player.h
-        player/playerException.h
-        timer/timer.h
-        videoPlayer/videoPlayer.h
+        # player/player.h
+        # player/playerException.h
+        # timer/timer.h
+        # videoPlayer/videoPlayer.h
         videoPlayerApp.h
 
         main.cpp
         sliderPlayer.cpp
-        player/player.cpp
-        player/playerException.cpp
-        timer/timer.cpp
-        videoPlayer/videoPlayer.cpp
+        # player/player.cpp
+        # player/playerException.cpp
+        # timer/timer.cpp
+        # videoPlayer/videoPlayer.cpp
         videoPlayerApp.cpp
 
         videoPlayerApp.ui
-        videoPlayerApp.qrc
+        ${videoPlayerResourse}
         ${TS_FILES}
 )
+
+# videoPlayerApp.qrc
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(videoPlayer
@@ -87,22 +110,42 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-if(WIN32)
-    message(STATUS "Building for Windows")
-elseif(UNIX)
-    message(STATUS "Building for Unix")
-endif()
-
-
 target_link_libraries(videoPlayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(videoPlayer PRIVATE libVideoPlayer)
+
+# add_library(libTimer "timer/timer.h" "timer/timer.cpp")
+# add_library(libPlayer "player/player.h" "player/player.cpp")
+# add_library(libPlayerException "player/playerException.h" "player/playerException.cpp")
+# add_library(libVideoPlayer "videoPlayer/videoPlayer.h" "videoPlayer/videoPlayer.cpp")
+
+# target_link_libraries(videoPlayer PRIVATE libPlayer)
+# target_link_libraries(videoPlayer PRIVATE libPlayerException)
+# target_link_libraries(videoPlayer PRIVATE libVideoPlayer)
+
+
+# add_library(videoPlayer2 STATIC C:/Qt/Qt5.14.2/5.14.2/msvc2017_64/bin/Qt5Widgets.dll)
+
+# message(videoPlayer${videoPlayer2})
+
+# add_library(videoPlayer public videoPlayer2)
+# target_link_libraries(videoPlayer INTERFACE Qt${QT_VERSION_MAJOR}::Gui)
+# target_link_libraries(videoPlayer INTERFACE Qt${QT_VERSION_MAJOR}::Core)
+
+
+# target_link_libraries(videoPlayer INTERFACE debug Qt5Guid INTERFACE optimized Qt5Gui)
+# target_link_libraries(videoPlayer INTERFACE debug Qt5Cored INTERFACE optimized Qt5Core)
+
 
 include_directories(
   ${gstreamer_INCLUDE_DIRS}
 )
 
-target_link_libraries(videoPlayer PRIVATE
-   ${gstreamer_LIBRARIES}
-)
+if(WIN32)
+    message(STATUS "Building for Windows")
+    message(${QT_VERSION_MAJOR})
+elseif(UNIX)
+    message(STATUS "Building for Unix")
+endif()
 
 set_target_properties(videoPlayer PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
@@ -115,3 +158,7 @@ set_target_properties(videoPlayer PROPERTIES
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(videoPlayer)
 endif()
+
+target_link_libraries(videoPlayer PRIVATE
+   ${gstreamer_LIBRARIES}
+)
