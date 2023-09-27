@@ -37,71 +37,77 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 
+if(WIN32)
+    message(STATUS "Building for Windows")
+    message(${QT_VERSION_MAJOR})
+elseif(UNIX)
+    message(STATUS "Building for Unix")
+endif()
+
 set(TS_FILES videoPlayer_ru_RU.ts)
-qt5_add_resources(videoPlayerResourse videoPlayerApp.qrc)
+# qt5_add_resources(videoPlayerResourse videoPlayerApp.qrc)
 
 
- add_library(libCalBackFunc
- "callBackFunc/ICallBackFunc.h"
- "callBackFunc/callBackFunc.h"
- "callBackFunc/callBackFunc.inl")
+#  add_library(libCalBackFunc
+#  "callBackFunc/ICallBackFunc.h"
+#  "callBackFunc/callBackFunc.h"
+#  "callBackFunc/callBackFunc.inl")
 
- add_library(libTimer
- "timer/timer.h"
- "timer/timer.inl"
- "timer/timer.cpp")
+#  add_library(libTimer
+#  "timer/timer.h"
+#  "timer/timer.inl"
+#  "timer/timer.cpp")
 
- target_link_libraries(libTimer
- PUBLIC ${gstreamer_LIBRARIES}
- PUBLIC libCalBackFunc
- )
+#  target_link_libraries(libTimer
+#  PUBLIC ${gstreamer_LIBRARIES}
+#  PUBLIC libCalBackFunc
+#  )
 
- add_library(libPlayer
- "player/player.h"
- "player/player.cpp"
- "player/playerException.h"
- "player/playerException.cpp")
+#  add_library(libPlayer
+#  "player/player.h"
+#  "player/player.cpp"
+#  "player/playerException.h"
+#  "player/playerException.cpp")
 
- add_library(libPlaybinGstream
- "videoPlayer/playbinGstream.h"
- "videoPlayer/playbinGstream.cpp"
- "videoPlayer/playbinGstream.inl")
+#  add_library(libPlaybinGstream
+#  "videoPlayer/playbinGstream.h"
+#  "videoPlayer/playbinGstream.cpp"
+#  "videoPlayer/playbinGstream.inl")
 
-target_link_libraries(libPlaybinGstream
-PUBLIC libPlayer
-PRIVATE libTimer
-)
+# target_link_libraries(libPlaybinGstream
+# PUBLIC libPlayer
+# PRIVATE libTimer
+# )
 
- add_library(libVideoPlayer
- "videoPlayer/videoPlayer.h"
- "videoPlayer/videoPlayer.cpp")
+#  add_library(libVideoPlayer
+#  "videoPlayer/videoPlayer.h"
+#  "videoPlayer/videoPlayer.cpp")
 
 
- target_link_libraries(libVideoPlayer
- PUBLIC Qt${QT_VERSION_MAJOR}::Widgets
- PRIVATE libPlaybinGstream
- )
+#  target_link_libraries(libVideoPlayer
+#  PUBLIC Qt${QT_VERSION_MAJOR}::Widgets
+#  PRIVATE libPlaybinGstream
+#  )
 
 set(PROJECT_SOURCES
-        
-#    player/player.h
-#    player/player.cpp
-#    player/playerException.h
-#    player/playerException.cpp
-#    timer/timer.h
-#    timer/timer.cpp
-#    timer/timer.inl
-#    videoPlayer/playbinGstream.h
-#    videoPlayer/playbinGstream.cpp
-#    videoPlayer/playbinGstream.inl
-#    videoPlayer/videoPlayer.h
-#    videoPlayer/videoPlayer.cpp
+    player/player.h
+    player/player.cpp
+    player/playerException.h
+    player/playerException.cpp
+    timer/timer.h
+    timer/timer.cpp
+    timer/timer.inl
+    videoPlayer/playbinGstream.h
+    videoPlayer/playbinGstream.cpp
+    videoPlayer/playbinGstream.inl
+    videoPlayer/videoPlayer.h
+    videoPlayer/videoPlayer.cpp
     sliderPlayer.h
     sliderPlayer.cpp
     main.cpp
     videoPlayerApp.cpp
     videoPlayerApp.ui
-    ${videoPlayerResourse}
+    videoPlayerApp.qrc
     ${TS_FILES}
 )
 
@@ -136,18 +142,15 @@ else()
 endif()
 
 target_link_libraries(videoPlayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(videoPlayer PRIVATE libVideoPlayer)
+# target_link_libraries(videoPlayer PRIVATE libVideoPlayer)
 
 include_directories(
   ${gstreamer_INCLUDE_DIRS}
 )
 
-if(WIN32)
-    message(STATUS "Building for Windows")
-    message(${QT_VERSION_MAJOR})
-elseif(UNIX)
-    message(STATUS "Building for Unix")
-endif()
+target_link_libraries(videoPlayer PRIVATE
+   ${gstreamer_LIBRARIES}
+)
 
 set_target_properties(videoPlayer PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
@@ -160,7 +163,3 @@ set_target_properties(videoPlayer PROPERTIES
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(videoPlayer)
 endif()
-
-target_link_libraries(videoPlayer PRIVATE
-   ${gstreamer_LIBRARIES}
-)

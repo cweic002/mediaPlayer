@@ -8,10 +8,6 @@
         <location filename="videoPlayerApp.ui" line="97"/>
         <location filename="videoPlayerApp.ui" line="110"/>
         <location filename="videoPlayerApp.ui" line="123"/>
-        <location filename="build/videoPlayer_autogen/include_Debug/ui_videoPlayerApp.h" line="235"/>
-        <location filename="build/videoPlayer_autogen/include_Debug/ui_videoPlayerApp.h" line="236"/>
-        <location filename="build/videoPlayer_autogen/include_Debug/ui_videoPlayerApp.h" line="237"/>
-        <location filename="build/videoPlayer_autogen/include_Debug/ui_videoPlayerApp.h" line="238"/>
         <location filename="build/videoPlayer_autogen/include_Release/ui_videoPlayerApp.h" line="235"/>
         <location filename="build/videoPlayer_autogen/include_Release/ui_videoPlayerApp.h" line="236"/>
         <location filename="build/videoPlayer_autogen/include_Release/ui_videoPlayerApp.h" line="237"/>
@@ -25,7 +21,6 @@
     </message>
     <message>
         <location filename="videoPlayerApp.ui" line="301"/>
-        <location filename="build/videoPlayer_autogen/include_Debug/ui_videoPlayerApp.h" line="242"/>
         <location filename="build/videoPlayer_autogen/include_Release/ui_videoPlayerApp.h" line="242"/>
         <location filename="ui_videoPlayerApp2.h" line="242"/>
         <source>Меню</source>
@@ -33,7 +28,6 @@
     </message>
     <message>
         <location filename="videoPlayerApp.ui" line="309"/>
-        <location filename="build/videoPlayer_autogen/include_Debug/ui_videoPlayerApp.h" line="231"/>
         <location filename="build/videoPlayer_autogen/include_Release/ui_videoPlayerApp.h" line="231"/>
         <location filename="ui_videoPlayerApp2.h" line="231"/>
         <source>Открыть Файл...</source>
@@ -41,7 +35,6 @@
     </message>
     <message>
         <location filename="videoPlayerApp.ui" line="312"/>
-        <location filename="build/videoPlayer_autogen/include_Debug/ui_videoPlayerApp.h" line="233"/>
         <location filename="build/videoPlayer_autogen/include_Release/ui_videoPlayerApp.h" line="233"/>
         <location filename="ui_videoPlayerApp2.h" line="233"/>
         <source>Ctrl+O</source>
