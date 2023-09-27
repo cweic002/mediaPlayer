@@ -330,7 +330,7 @@
    <slots>
     <signal>watchPlay(bool)</signal>
     <signal>watchPosition(double)</signal>
-    <slot>play(bool)</slot>
+    <slot>setPlay(bool)</slot>
     <slot>setMute(bool)</slot>
    </slots>
   </customwidget>
@@ -411,7 +411,7 @@
    <sender>pushButtonPlayStop</sender>
    <signal>toggled(bool)</signal>
    <receiver>widgetDisplay</receiver>
-   <slot>play(bool)</slot>
+   <slot>setPlay(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>14</x>

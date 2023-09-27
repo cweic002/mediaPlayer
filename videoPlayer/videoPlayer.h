@@ -3,33 +3,21 @@
 
 #include <QWidget>
 #include "player/player.h"
+#include "videoPlayer/playbinGstream.h"
 
-class VideoPlayer: public QWidget, public Player
+class VideoPlayer: public QWidget, public PlaybinGstream
 {
     Q_OBJECT
 public:
     VideoPlayer(QWidget *parent = nullptr);
-    ~VideoPlayer();
-    bool openFile(const char * path) override;
     bool play() override;
     bool pause() override;
-    void stop() override;
-    bool addStepUp(long long step) override;
-    bool addStepDown(long long step) override;
-    //bool setMuteOff() override;
-    long long getDuration() override;
-    long long getPosition() override;
-    void setPosition(long long position) override;
 public slots:
-    void setMute(bool mute) override;
-    void setVolume(double volume) override;
-    void play(bool status);
+    void setMute(bool mute);
+    void setPlay(bool play);
 Q_SIGNALS:
     void watchPosition(double share);
     void watchPlay(bool status);
-private:
-    struct Obj;
-    Obj * _obj;
 };
 
 #endif // VIDEOPLAYER_H

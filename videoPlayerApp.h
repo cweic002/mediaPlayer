@@ -27,9 +27,7 @@ private slots:
     void showFullScreen(bool checked);
     void on_openFille_triggered();
     void on_horizontalSliderVideoDuration_valueChanged(int value);
-
     void on_horizontalSliderSoundDuration_valueChanged(int value);
-
 private:
     QWidget *menu;
     Ui::QtVideo ui;

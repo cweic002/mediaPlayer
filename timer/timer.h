@@ -2,20 +2,24 @@
 #define TIMER_H
 
 #include "gst/gst.h"
+#include "callBackFunc/callBackFunc.h"
 
 class Timer {
     GstClock* _clock;
     GstClockID _clockID;
-    GstClockCallback _sendSignal;
-    gpointer _user_data;
+    ICallBackFunc * _callBackTimer; 
     enum TimerFlags {
         TIMER_FLAG_PAUSE = 0
     };
+    static GstClockReturn sendSignal(GstClock *clock, GstClockTime time, GstClockID id, Timer * timer);
 public:
-    Timer(GstClock* clock, GstClockCallback sendSignal, gpointer user_data);
+    template<typename Func>
+    Timer(GstClock* clock, Func callBackFunc);
     void start();
     void pause();
     ~Timer();
 };
+
+#include "timer.inl"
 
 #endif //TIMER_H

@@ -40,44 +40,69 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 set(TS_FILES videoPlayer_ru_RU.ts)
 qt5_add_resources(videoPlayerResourse videoPlayerApp.qrc)
 
-add_library(libTimer "timer/timer.h" "timer/timer.cpp")
 
-add_library(libPlayer "player/player.h" "player/player.cpp" "player/playerException.h" "player/playerException.cpp")
+ add_library(libCalBackFunc
+ "callBackFunc/ICallBackFunc.h"
+ "callBackFunc/callBackFunc.h"
+ "callBackFunc/callBackFunc.inl")
 
-# add_library(libPlayer "player/player.h" "player/player.cpp" )
-# add_library(libPlayerException "player/playerException.h" "player/playerException.cpp")
+ add_library(libTimer
+ "timer/timer.h"
+ "timer/timer.inl"
+ "timer/timer.cpp")
 
-add_library(libVideoPlayer "videoPlayer/videoPlayer.h" "videoPlayer/videoPlayer.cpp")
+ target_link_libraries(libTimer
+ PUBLIC ${gstreamer_LIBRARIES}
+ PUBLIC libCalBackFunc
+ )
 
-target_link_libraries(libTimer PRIVATE
-   ${gstreamer_LIBRARIES}
-)
+ add_library(libPlayer
+ "player/player.h"
+ "player/player.cpp"
+ "player/playerException.h"
+ "player/playerException.cpp")
 
-target_link_libraries(libVideoPlayer 
-PUBLIC Qt${QT_VERSION_MAJOR}::Widgets
+ add_library(libPlaybinGstream
+ "videoPlayer/playbinGstream.h"
+ "videoPlayer/playbinGstream.cpp"
+ "videoPlayer/playbinGstream.inl")
+
+target_link_libraries(libPlaybinGstream
 PUBLIC libPlayer
 PRIVATE libTimer
 )
 
+ add_library(libVideoPlayer
+ "videoPlayer/videoPlayer.h"
+ "videoPlayer/videoPlayer.cpp")
+
+
+ target_link_libraries(libVideoPlayer
+ PUBLIC Qt${QT_VERSION_MAJOR}::Widgets
+ PRIVATE libPlaybinGstream
+ )
+
 set(PROJECT_SOURCES
-        sliderPlayer.h
-        # player/player.h
-        # player/playerException.h
-        # timer/timer.h
-        # videoPlayer/videoPlayer.h
-        videoPlayerApp.h
-
-        main.cpp
-        sliderPlayer.cpp
-        # player/player.cpp
-        # player/playerException.cpp
-        # timer/timer.cpp
-        # videoPlayer/videoPlayer.cpp
-        videoPlayerApp.cpp
-
-        videoPlayerApp.ui
-        ${videoPlayerResourse}
-        ${TS_FILES}
+        
+#    player/player.h
+#    player/player.cpp
+#    player/playerException.h
+#    player/playerException.cpp
+#    timer/timer.h
+#    timer/timer.cpp
+#    timer/timer.inl
+#    videoPlayer/playbinGstream.h
+#    videoPlayer/playbinGstream.cpp
+#    videoPlayer/playbinGstream.inl
+#    videoPlayer/videoPlayer.h
+#    videoPlayer/videoPlayer.cpp
+    sliderPlayer.h
+    sliderPlayer.cpp
+    main.cpp
+    videoPlayerApp.cpp
+    videoPlayerApp.ui
+    ${videoPlayerResourse}
+    ${TS_FILES}
 )
 
 # videoPlayerApp.qrc
@@ -112,29 +137,6 @@ endif()
 
 target_link_libraries(videoPlayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(videoPlayer PRIVATE libVideoPlayer)
-
-# add_library(libTimer "timer/timer.h" "timer/timer.cpp")
-# add_library(libPlayer "player/player.h" "player/player.cpp")
-# add_library(libPlayerException "player/playerException.h" "player/playerException.cpp")
-# add_library(libVideoPlayer "videoPlayer/videoPlayer.h" "videoPlayer/videoPlayer.cpp")
-
-# target_link_libraries(videoPlayer PRIVATE libPlayer)
-# target_link_libraries(videoPlayer PRIVATE libPlayerException)
-# target_link_libraries(videoPlayer PRIVATE libVideoPlayer)
-
-
-# add_library(videoPlayer2 STATIC C:/Qt/Qt5.14.2/5.14.2/msvc2017_64/bin/Qt5Widgets.dll)
-
-# message(videoPlayer${videoPlayer2})
-
-# add_library(videoPlayer public videoPlayer2)
-# target_link_libraries(videoPlayer INTERFACE Qt${QT_VERSION_MAJOR}::Gui)
-# target_link_libraries(videoPlayer INTERFACE Qt${QT_VERSION_MAJOR}::Core)
-
-
-# target_link_libraries(videoPlayer INTERFACE debug Qt5Guid INTERFACE optimized Qt5Gui)
-# target_link_libraries(videoPlayer INTERFACE debug Qt5Cored INTERFACE optimized Qt5Core)
-
 
 include_directories(
   ${gstreamer_INCLUDE_DIRS}
