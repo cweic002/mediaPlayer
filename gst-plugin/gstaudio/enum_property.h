@@ -1,0 +1,4 @@
+#ifndef ENUM_PROPERTY_H
+#define ENUM_PROPERTY_H
+
+#endif // ENUM_PROPERTY_H
