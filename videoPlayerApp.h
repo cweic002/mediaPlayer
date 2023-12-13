@@ -1,16 +1,23 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
-#include "ui_videoPlayerApp.h"
 #include <QtWidgets>
 
+#include "ui_videoPlayerApp.h"
+
 #include "glib.h"
-#include "gst/gst.h"
 #include "gst/video/videooverlay.h"
 #include "gst/video/navigation.h"
 #include "gst/video/colorbalance.h"
-
 #include <QTimer>
+
+#include "model/videoPlayer/videoPlayer.h"
+#include "controller/init/init.h"
+#include "controller/openFile/openFile.h"
+#include "controller/player/player.h"
+#include "controller/volume/volume.h"
+#include "controller/mute/mute.h"
+#include "controller/position/position.h"
 
 class QtVideo : public QMainWindow
 {
@@ -18,21 +25,31 @@ class QtVideo : public QMainWindow
 public:
     QtVideo(QWidget *parent = nullptr);
     ~QtVideo();
+    void update_sliderVideoDuration();
 Q_SIGNALS:
     void signalFullScreen(bool status);
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
 private slots:
-    void showFullScreen(bool checked);
     void on_openFille_triggered();
-    void on_horizontalSliderVideoDuration_valueChanged(int value);
-    void on_horizontalSliderSoundDuration_valueChanged(int value);
+    void on_pushButtonPlayStop_toggled(bool checked);
+    void on_pushButtonSound_toggled(bool checked);
+    void on_sliderVideoDuration_valueChanged(int value);
+    void on_sliderSoundDuration_valueChanged(int value);
+    void on_pushButtonStepDown_clicked();
+
+    void on_pushButtonStepUp_clicked();
+
 private:
     QWidget *menu;
+    QTimer *timer;
     Ui::QtVideo ui;
-    GstBus * bus;
     bool boolFullScreen;
-    int maxStep;
-    gint64 duration;
+    std::shared_ptr<Model::VideoPlayer> modelVideoPlayer;
+    std::unique_ptr<Controller::Init::IInit> controllerInit;
+    std::unique_ptr<Controller::OpenFile::IOpenFile> controllerOpenfile;
+    std::unique_ptr<Controller::Player::IPlayer> controllerPlayer;
+    std::unique_ptr<Controller::Volume::IVolume> controllerVolume;
+    std::unique_ptr<Controller::Mute::IMute> controllerMute;
+    std::unique_ptr<Controller::Position::IPosition> controllerPosition;
 };

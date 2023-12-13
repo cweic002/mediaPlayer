@@ -1,4 +1,11 @@
 #ifndef ENUM_PROPERTY_H
 #define ENUM_PROPERTY_H
 
+enum
+{
+  PROP_0,
+  PROP_VOLUME,
+  PROP_MUTE
+};
+
 #endif // ENUM_PROPERTY_H

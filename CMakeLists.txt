@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(videoPlayer VERSION 0.1 LANGUAGES CXX)
+project(videoPlayerApp VERSION 0.1 LANGUAGES CXX)
 
 find_package(PkgConfig)
 
@@ -13,17 +13,18 @@ macro(find_gstreamer_component prefix pkg lib)
 endmacro()
 
 find_gstreamer_component(gst      gstreamer-1.0       gstreamer-1.0)
-find_gstreamer_component(gstbase  gstreamer-base-1.0  gstbase-1.0)
-find_gstreamer_component(gstapp   gstreamer-app-1.0   gstapp-1.0)
-find_gstreamer_component(gstvideo gstreamer-video-1.0 gstvideo-1.0)
-find_gstreamer_component(gstvideo gstreamer-video-1.0 gstvideo-1.0)
 find_gstreamer_component(glib glib-2.0 glib-2.0)
 find_gstreamer_component(gstgobject gobject-2.0 gobject-2.0)
-find_gstreamer_component(intl gstreamer-1.0 intl)
 find_gstreamer_component(gthread gstreamer-1.0 gthread-2.0)
 
-# message(STATUS "inc: ${gstreamer_INCLUDE_DIRS}")
-# message(STATUS "lib: ${gstreamer_LIBRARIES}")
+
+#find_gstreamer_component(gstbase  gstreamer-base-1.0  gstbase-1.0)
+#find_gstreamer_component(gstapp   gstreamer-app-1.0   gstapp-1.0)
+#find_gstreamer_component(gstvideo gstreamer-video-1.0 gstvideo-1.0)
+#find_gstreamer_component(glib glib-2.0 glib-2.0)
+#find_gstreamer_component(gstgobject gobject-2.0 gobject-2.0)
+#find_gstreamer_component(gthread gstreamer-1.0 gthread-2.0)
+#find_gstreamer_component(gstaudio gstreamer-audio-1.0 gstaudio-1.0)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -39,120 +40,65 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 
 if(WIN32)
     message(STATUS "Building for Windows")
-    message(${QT_VERSION_MAJOR})
 elseif(UNIX)
     message(STATUS "Building for Unix")
 endif()
 
-set(TS_FILES videoPlayer_ru_RU.ts)
+#set(TS_FILES videoPlayer_ru_RU.ts)
 # qt5_add_resources(videoPlayerResourse videoPlayerApp.qrc)
 
+# add_subdirectory(timer)
+# add_subdirectory(player)
+add_subdirectory(mvc)
+#add_subdirectory(videoPlayer)
+add_subdirectory(gst-plugin)
 
-#  add_library(libCalBackFunc
-#  "callBackFunc/ICallBackFunc.h"
-#  "callBackFunc/callBackFunc.h"
-#  "callBackFunc/callBackFunc.inl")
+#target_include_directories(Tutorial PUBLIC
+#                          "${PROJECT_BINARY_DIR}"
+#                          "${PROJECT_SOURCE_DIR}/MathFunctions"
+#                          )
 
-#  add_library(libTimer
-#  "timer/timer.h"
-#  "timer/timer.inl"
-#  "timer/timer.cpp")
-
-#  target_link_libraries(libTimer
-#  PUBLIC ${gstreamer_LIBRARIES}
-#  PUBLIC libCalBackFunc
-#  )
-
-#  add_library(libPlayer
-#  "player/player.h"
-#  "player/player.cpp"
-#  "player/playerException.h"
-#  "player/playerException.cpp")
-
-#  add_library(libPlaybinGstream
-#  "videoPlayer/playbinGstream.h"
-#  "videoPlayer/playbinGstream.cpp"
-#  "videoPlayer/playbinGstream.inl")
-
-# target_link_libraries(libPlaybinGstream
-# PUBLIC libPlayer
-# PRIVATE libTimer
-# )
-
-#  add_library(libVideoPlayer
-#  "videoPlayer/videoPlayer.h"
-#  "videoPlayer/videoPlayer.cpp")
-
-
-#  target_link_libraries(libVideoPlayer
-#  PUBLIC Qt${QT_VERSION_MAJOR}::Widgets
-#  PRIVATE libPlaybinGstream
-#  )
+include_directories(${gstreamer_INCLUDE_DIRS})
 
 set(PROJECT_SOURCES
-    player/player.h
-    player/player.cpp
-    player/playerException.h
-    player/playerException.cpp
-    timer/timer.h
-    timer/timer.cpp
-    timer/timer.inl
-    videoPlayer/playbinGstream.h
-    videoPlayer/playbinGstream.cpp
-    videoPlayer/playbinGstream.inl
-    videoPlayer/videoPlayer.h
-    videoPlayer/videoPlayer.cpp
+    # player/player.h
+    # player/player.cpp
+    # player/playerException.h
+    # player/playerException.cpp
+    # timer/timer.h
+    # timer/timer.cpp
+    # timer/timer.inl
+    # videoPlayer/playbinGstream.h
+    # videoPlayer/playbinGstream.cpp
+    # videoPlayer/playbinGstream.inl
+    # videoPlayer/videoPlayer.h
+    # videoPlayer/videoPlayer.cpp
     sliderPlayer.h
     sliderPlayer.cpp
     main.cpp
+    videoPlayerApp.h
     videoPlayerApp.cpp
     videoPlayerApp.ui
     videoPlayerApp.qrc
     ${TS_FILES}
 )
 
-# videoPlayerApp.qrc
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(videoPlayer
+    qt_add_executable(videoPlayerApp
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET videoPlayer APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-
     message("Qt_version ${QT_VERSION_MAJOR}")
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 else()
-    if(ANDROID)
-        add_library(videoPlayer SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(videoPlayer
-            ${PROJECT_SOURCES}
-        )
-    endif()
-
+    add_executable(videoPlayerApp ${PROJECT_SOURCES})
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(videoPlayer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-# target_link_libraries(videoPlayer PRIVATE libVideoPlayer)
+target_link_libraries(videoPlayerApp PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(videoPlayerApp PRIVATE ${gstreamer_LIBRARIES})
 
-include_directories(
-  ${gstreamer_INCLUDE_DIRS}
-)
-
-target_link_libraries(videoPlayer PRIVATE
-   ${gstreamer_LIBRARIES}
-)
-
-set_target_properties(videoPlayer PROPERTIES
+set_target_properties(videoPlayerApp PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -163,3 +109,14 @@ set_target_properties(videoPlayer PROPERTIES
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(videoPlayer)
 endif()
+
+target_link_libraries(videoPlayerApp PUBLIC controllerInitVideoPlayer)
+target_link_libraries(videoPlayerApp PUBLIC controllerVolumeVideoPlayer)
+target_link_libraries(videoPlayerApp PUBLIC controllerMuteVideoPlayer)
+target_link_libraries(videoPlayerApp PUBLIC controllerOpenFileVideoPlayer)
+target_link_libraries(videoPlayerApp PUBLIC controllerPlayerVideoPlayer)
+target_link_libraries(videoPlayerApp PUBLIC controllerPositionVideoPlayer)
+target_link_libraries(videoPlayerApp PUBLIC viewVideoPlayer)
+
+
+#GST_PLUGIN_PATH

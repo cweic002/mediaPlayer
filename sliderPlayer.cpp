@@ -1,15 +1,14 @@
 #include "sliderPlayer.h"
 
-SliderPlayer::SliderPlayer(QWidget* parent):QSlider(parent)
-{
-
+SliderPlayer::SliderPlayer(QWidget* parent):QSlider(parent){
+    
 }
 
-void SliderPlayer::mousePressEvent(QMouseEvent *ev){
+inline void SliderPlayer::mousePressEvent(QMouseEvent *ev){
     this->setValue((ev->x()*this->maximum())/this->width());
 }
 
-void SliderPlayer::mouseMoveEvent(QMouseEvent *ev){
+inline void SliderPlayer::mouseMoveEvent(QMouseEvent *ev){
     this->setValue((ev->x()*this->maximum())/this->width());
 }
 
