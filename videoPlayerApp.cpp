@@ -11,7 +11,7 @@ constexpr std::chrono::milliseconds positionIntervalStep = std::chrono::millisec
 
 QtVideo::QtVideo(QWidget* parent):QMainWindow(parent),timer(new QTimer(this)),boolFullScreen(false),
             modelVideoPlayer(new Model::VideoPlayer()),
-            controllerPlayer( new Controller::Player::VideoPlayer(modelVideoPlayer)),
+            controllerPlayer( new Controller::Player::VideoPlayer(modelVideoPlayer,this)),
             controllerInit(new Controller::Init::VideoPlayer(modelVideoPlayer)),
             controllerOpenfile(new Controller::OpenFile::VideoPlayer(modelVideoPlayer)),
             controllerVolume(new Controller::Volume::VideoPlayer(modelVideoPlayer)),
@@ -20,6 +20,7 @@ QtVideo::QtVideo(QWidget* parent):QMainWindow(parent),timer(new QTimer(this)),bo
 {
     ui.setupUi(this);
     controllerInit->init();
+    controllerPlayer->init();
 
     ui.viewVideoPlayer->setModel(modelVideoPlayer);
     ui.viewVideoPlayer->setWindowHandle();
@@ -27,7 +28,8 @@ QtVideo::QtVideo(QWidget* parent):QMainWindow(parent),timer(new QTimer(this)),bo
 }
 
 void QtVideo::update_sliderVideoDuration(){
-    int position = static_cast<int>(controllerPosition->getPosition()*ui.sliderVideoDuration->maximum());
+    auto pos = controllerPosition->getPosition();
+    int position = static_cast<int>(pos*ui.sliderVideoDuration->maximum());
     this->ui.sliderVideoDuration->blockSignals(true);
     ui.sliderVideoDuration->setValue(position);
     this->ui.sliderVideoDuration->blockSignals(false);
@@ -42,12 +44,15 @@ void QtVideo::on_openFille_triggered(){
     {
         controllerOpenfile->open(path.toUtf8().data());
         //play
-        controllerPlayer->setCallBack([this](bool status){
+        connect(controllerPlayer,&Controller::Player::IPlayer::sendState,[this](Controller::Player::State status){
             this->ui.pushButtonPlayStop->blockSignals(true);
-            this->ui.pushButtonPlayStop->setChecked(status);
+            if(status==Controller::Player::State::PLAYING)
+                this->ui.pushButtonPlayStop->setChecked(true);
+            else
+                this->ui.pushButtonPlayStop->setChecked(false);
             this->ui.pushButtonPlayStop->blockSignals(false);
         });
-        controllerPlayer->play();
+        controllerPlayer->play(true);
         timer->start(timerInterval);
         //set volume
         gdouble val = (gdouble)ui.sliderSoundDuration->value()/ui.sliderSoundDuration->maximum();
@@ -70,8 +75,7 @@ void QtVideo::mouseDoubleClickEvent(QMouseEvent *event)
 void QtVideo::on_sliderVideoDuration_valueChanged(int value)
 {
     double position = (double)value/ui.sliderVideoDuration->maximum();
-    Controller::Position::VideoPlayer controllerPosition(modelVideoPlayer);
-    controllerPosition.setPosition(position);
+    controllerPosition->setPosition(position);
 }
 
 void QtVideo::on_sliderSoundDuration_valueChanged(int value)
@@ -83,10 +87,10 @@ void QtVideo::on_sliderSoundDuration_valueChanged(int value)
 void QtVideo::on_pushButtonPlayStop_toggled(bool checked)
 {
     if(checked){
-        if(controllerPlayer->play())
-            timer->start(timerInterval);
+        controllerPlayer->play(true);
+        timer->start(timerInterval);
     }else{
-        controllerPlayer->pause();
+        controllerPlayer->play(false);
         timer->stop();
     }
 }
@@ -99,9 +103,19 @@ void QtVideo::on_pushButtonSound_toggled(bool mute)
 void QtVideo::on_pushButtonStepDown_clicked()
 {
     controllerPosition->setStep(-positionIntervalStep);
+    update_sliderVideoDuration();
+    // double pos = controllerPosition->getPosition();
+    // int max = ui.sliderVideoDuration->maximum();
+    // int position = static_cast<int>(pos*max);
+    // update_sliderVideoDuration();
 }
 
 void QtVideo::on_pushButtonStepUp_clicked()
 {
     controllerPosition->setStep(positionIntervalStep);
+    update_sliderVideoDuration();
+    // double pos = controllerPosition->getPosition();
+    // int max = ui.sliderVideoDuration->maximum();
+    // int position = static_cast<int>(pos*max);
+    // update_sliderVideoDuration();
 }

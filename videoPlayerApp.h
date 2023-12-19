@@ -48,7 +48,7 @@ private:
     std::shared_ptr<Model::VideoPlayer> modelVideoPlayer;
     std::unique_ptr<Controller::Init::IInit> controllerInit;
     std::unique_ptr<Controller::OpenFile::IOpenFile> controllerOpenfile;
-    std::unique_ptr<Controller::Player::IPlayer> controllerPlayer;
+    Controller::Player::IPlayer * controllerPlayer;
     std::unique_ptr<Controller::Volume::IVolume> controllerVolume;
     std::unique_ptr<Controller::Mute::IMute> controllerMute;
     std::unique_ptr<Controller::Position::IPosition> controllerPosition;
