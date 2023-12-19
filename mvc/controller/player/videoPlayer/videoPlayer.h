@@ -5,17 +5,16 @@
 
 namespace Controller{
     namespace Player{
-        class VideoPlayer: public ControllerCRTP<Model::VideoPlayer>,public IPlayer{
-            std::function<void(bool)> funCallBack;
+        class VideoPlayer:public IPlayer, public ControllerCRTP<Model::VideoPlayer>{
+            Q_OBJECT
             GstBus * bus;
             static GstBusSyncReply handle_message(GstBus* bus, GstMessage * message, Controller::Player::VideoPlayer * data);
         public:
-            VideoPlayer(Model::VideoPlayer * modelVideoPlayer);
-            VideoPlayer(std::shared_ptr<Model::VideoPlayer> & modelVideoPlayer);
-            bool play() override;
+            VideoPlayer(Model::VideoPlayer * modelVideoPlayer,QObject *parent = nullptr);
+            VideoPlayer(std::shared_ptr<Model::VideoPlayer> & modelVideoPlayer,QObject *parent = nullptr);
+            void init() override;
+            void play(bool isPlay) override;
             void stop() override;
-            void pause() override;
-            void setCallBack(std::function<void(bool)> funCallback) override;
             ~VideoPlayer();
         };
     }
