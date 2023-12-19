@@ -6,13 +6,13 @@ Controller::Position::VideoPlayer::VideoPlayer(Model::VideoPlayer * modelVideoPl
 Controller::Position::VideoPlayer::VideoPlayer(std::shared_ptr<Model::VideoPlayer> & modelVideoPlayer):
           ControllerCRTP(modelVideoPlayer){}
 
-inline void Controller::Position::VideoPlayer::setPosition(double volume){
+inline void Controller::Position::VideoPlayer::setPosition(double position){
   if(this->model && model->audio){
     gint64 duration;
-    gst_element_query_duration(model->videoPlayer, GST_FORMAT_TIME, &duration);
-    gint64 position = (gint64)(duration*volume);
+    gst_element_query_duration(model->videoPlayer, GST_FORMAT_TIME , &duration);
+    gint64 new_position = static_cast<gint64>(duration*position);
     gst_element_seek_simple(model->videoPlayer, GST_FORMAT_TIME,
-              (GstSeekFlags)(GST_SEEK_FLAG_KEY_UNIT | GST_SEEK_FLAG_FLUSH),position);
+              (GstSeekFlags)(GST_SEEK_FLAG_KEY_UNIT | GST_SEEK_FLAG_FLUSH),new_position);
   }
 }
 
@@ -28,14 +28,25 @@ inline void Controller::Position::VideoPlayer::setStep(std::chrono::milliseconds
 
 inline double Controller::Position::VideoPlayer::getPosition(){
   if(this->model && model->videoPlayer){
+    gint64 position = -1;
+    while(position==-1){
+      gst_element_query_position(model->videoPlayer,GST_FORMAT_TIME,&position);
+    }
     gint64 duration;
     gst_element_query_duration(model->videoPlayer, GST_FORMAT_TIME, &duration);
-    gint64 position;
-    gst_element_query_position(model->videoPlayer,GST_FORMAT_TIME,&position);
     return (double)position/duration;
   }
   return 0.0;
 }
+
+// inline long long Controller::Position::VideoPlayer::getDuration(){
+//   if(this->model && model->videoPlayer){
+//     gint64 duration;
+//     gst_element_query_duration(model->videoPlayer, GST_FORMAT_TIME, &duration);
+//     return duration;
+//   }
+//   return 0;
+// }
 
 // // #include "gst/video/videooverlay.h"
 // // #include "gst/player/player.h"
