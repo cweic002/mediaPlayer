@@ -1,0 +1,9 @@
+cmake_minimum_required(VERSION 3.5)
+
+project(iFactory)
+add_subdirectory(iFGstElement)
+add_subdirectory(iFGstElementSrc)
+add_subdirectory(iFGstElementDecodebin)
+add_subdirectory(iFGstElementAudio)
+add_subdirectory(iFGstElementVideo)
+add_subdirectory(iFVideoPlayer)

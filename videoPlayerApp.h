@@ -2,54 +2,38 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets>
-
-#include "ui_videoPlayerApp.h"
-
-#include "glib.h"
-#include "gst/video/videooverlay.h"
-#include "gst/video/navigation.h"
-#include "gst/video/colorbalance.h"
 #include <QTimer>
 
-#include "model/videoPlayer/videoPlayer.h"
-#include "controller/init/init.h"
-#include "controller/openFile/openFile.h"
-#include "controller/player/player.h"
-#include "controller/volume/volume.h"
-#include "controller/mute/mute.h"
-#include "controller/position/position.h"
+#include "ui_videoPlayerApp.h"
+#include "Interface/iVideoPlayer/iVideoPlayer.h"
+#include "interface/iBotomMenu/iBotomMenuPlayer/iBotomMenuPlayer.h"
 
 class QtVideo : public QMainWindow
 {
     Q_OBJECT
 public:
-    QtVideo(QWidget *parent = nullptr);
+    template<typename VideoPlayer,typename BotomMenuPlayer,typename ConnectFunc>
+    QtVideo(QApplication * app,VideoPlayer * videoPlayer,BotomMenuPlayer botomMenuPlayer,ConnectFunc connectFunc,QWidget *parent = nullptr);
     ~QtVideo();
-    void update_sliderVideoDuration();
+    void changeEvent(QEvent* ре) override;
+    void contextMenuEvent(QContextMenuEvent * pe) override;
 Q_SIGNALS:
     void signalFullScreen(bool status);
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event) override;
 private slots:
     void on_openFille_triggered();
-    void on_pushButtonPlayStop_toggled(bool checked);
-    void on_pushButtonSound_toggled(bool checked);
-    void on_sliderVideoDuration_valueChanged(int value);
-    void on_sliderSoundDuration_valueChanged(int value);
-    void on_pushButtonStepDown_clicked();
-
-    void on_pushButtonStepUp_clicked();
-
 private:
-    QWidget *menu;
-    QTimer *timer;
+    QApplication * app;
+    Interface::IVideoPlayer * videoPlayer;
+    Interface::IBotomMenuPlayer * botomMenuPlayer;
+    QMenu* context_menu;
     Ui::QtVideo ui;
+    QTranslator translator;
     bool boolFullScreen;
-    std::shared_ptr<Model::VideoPlayer> modelVideoPlayer;
-    std::unique_ptr<Controller::Init::IInit> controllerInit;
-    std::unique_ptr<Controller::OpenFile::IOpenFile> controllerOpenfile;
-    Controller::Player::IPlayer * controllerPlayer;
-    std::unique_ptr<Controller::Volume::IVolume> controllerVolume;
-    std::unique_ptr<Controller::Mute::IMute> controllerMute;
-    std::unique_ptr<Controller::Position::IPosition> controllerPosition;
 };
+
+#include "videoPlayerApp.inl"
+
+
+

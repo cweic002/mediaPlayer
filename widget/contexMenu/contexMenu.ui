@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ContexMenu</class>
+ <widget class="QMenu" name="ContexMenu">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="title">
+   <string>ContextMenu</string>
+  </property>
+  <action name="actionPlay">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../botomMenu/botomMenuPlayer/botomMenuPlayer.qrc">
+     <normaloff>:/widget/botomMenu/botomMenuPlayer/img/player/play.png</normaloff>
+     <normalon>:/widget/botomMenu/botomMenuPlayer/img/player/pause.png</normalon>:/widget/botomMenu/botomMenuPlayer/img/player/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>Play</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionStop">
+   <property name="icon">
+    <iconset resource="../botomMenu/botomMenuPlayer/botomMenuPlayer.qrc">
+     <normaloff>:/widget/botomMenu/botomMenuPlayer/img/player/pause.png</normaloff>:/widget/botomMenu/botomMenuPlayer/img/player/pause.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop</string>
+   </property>
+  </action>
+  <addaction name="actionPlay"/>
+  <addaction name="actionStop"/>
+ </widget>
+ <resources>
+  <include location="../botomMenu/botomMenuPlayer/botomMenuPlayer.qrc"/>
+ </resources>
+ <connections/>
+</ui>
