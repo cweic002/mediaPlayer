@@ -19,18 +19,19 @@ public:
     void contextMenuEvent(QContextMenuEvent * pe) override;
 Q_SIGNALS:
     void signalFullScreen(bool status);
+    void fileNameChanged(QString file);
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event) override;
 private slots:
     void on_openFille_triggered();
 private:
-    QApplication * app;
-    Interface::IVideoPlayer * videoPlayer;
-    Interface::IBotomMenuPlayer * botomMenuPlayer;
-    QMenu* context_menu;
-    Ui::QtVideo ui;
-    QTranslator translator;
-    bool boolFullScreen;
+    QApplication * _app;
+    Interface::IVideoPlayer * _videoPlayer;
+    Interface::IBotomMenuPlayer * _botomMenuPlayer;
+    QMenu* _context_menu;
+    Ui::QtVideo _ui;
+    QTranslator _translator;
+    bool _boolFullScreen;
 };
 
 #include "videoPlayerApp.inl"

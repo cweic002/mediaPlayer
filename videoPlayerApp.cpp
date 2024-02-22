@@ -8,13 +8,13 @@ QtVideo::~QtVideo(){}
 void QtVideo::changeEvent(QEvent* pe)
 {
     if (pe->type() == QEvent::LanguageChange){
-        ui.retranslateUi(this);
+        _ui.retranslateUi(this);
     }
     QWidget::changeEvent(pe);
 }
 
 void QtVideo::contextMenuEvent(QContextMenuEvent * pe){
-    context_menu->exec(pe->globalPos());
+    _context_menu->exec(pe->globalPos());
 }
 
 //menu
@@ -27,24 +27,26 @@ void QtVideo::on_openFille_triggered(){
     QString path = QFileDialog::getOpenFileName(this, tr("OpenFile"), QDir::currentPath(), "*.mkv *.webm *.mp4");
     if(!path.isEmpty())
     {
+        emit fileNameChanged(path);
+        _videoPlayer->play();
         //set path
-        videoPlayer->setMedia(path);
-        //play
-        videoPlayer->play();
-        //set volume
-        auto volume = botomMenuPlayer->getVolume();
-        videoPlayer->setVolume(volume);
+        // videoPlayer->setMedia(pat);
+        // //play
+        // videoPlayer->play();
+        // //set volume
+        // auto volume = botomMenuPlayer->getVolume();
+        // videoPlayer->setVolume(volume);
     }
 }
 
 //mouseDoubleClickEvent
 void QtVideo::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    boolFullScreen = !boolFullScreen;
-    if(boolFullScreen){
+    _boolFullScreen = !_boolFullScreen;
+    if(_boolFullScreen){
        this->QMainWindow::showFullScreen();
     }else{
         this->QMainWindow::showNormal();
     }
-    emit signalFullScreen(boolFullScreen);
+    emit signalFullScreen(_boolFullScreen);
 }

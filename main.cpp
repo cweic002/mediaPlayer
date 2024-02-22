@@ -3,7 +3,6 @@
 #include <QtWidgets>
 #include <gst/gst.h>
 
-#include "object/videoPlayer/videoPlayer.h"
 #include "widget/botomMenu/botomMenuPlayer/botomMenuPlayer.h"
 #include "object/factory/fVideoPlayer/fVideoPlayer.h"
 #include <QMessageBox>
@@ -60,7 +59,7 @@ void connectVideoPlayerBotomMenuPlayer(Object::VideoPlayer * videoPlayer,Widget:
 
 int main(int argc, char* argv[]) {
     if (!g_thread_supported())
-        g_thread_init(NULL);
+        g_thread_init(nullptr);
     gst_init(&argc, &argv);
     QApplication app(argc, argv);
     QTranslator translator;
@@ -76,8 +75,10 @@ int main(int argc, char* argv[]) {
     app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
     try{
         Object::VideoPlayer * videoPlayer = Object::Factory::FVideoPlayer().createIVideoPlayer();
-        QtVideo window(&app,videoPlayer,
-                       new Widget::BotomMenuPlayer(),
+        Widget::BotomMenuPlayer * botomMenuPlayer = new Widget::BotomMenuPlayer();
+        QtVideo window(&app,
+                       videoPlayer,
+                       botomMenuPlayer,
                        connectVideoPlayerBotomMenuPlayer);
         window.show();
         return app.exec();

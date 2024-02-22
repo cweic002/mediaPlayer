@@ -5,8 +5,8 @@
 #include "object/factory/fGstMyPlaginVideo/fGstMyPlaginVideo.h"
 
 Object::VideoPlayer * Object::Factory::FVideoPlayer::createIVideoPlayer(){
-    return new Object::VideoPlayer(new Object::Factory::FGstSrc(),
-                    new Object::Factory::FGstDecodebin(),
-                    new Object::Factory::FGstMyPlaginVideo(),
-                    new Object::Factory::FGstMyPlaginAudio());
+    return new Object::VideoPlayer(Object::Factory::FGstSrc().createGstElement(),
+                    Object::Factory::FGstDecodebin().createGstElement(),
+                    Object::Factory::FGstMyPlaginVideo().createGstVideoOverlay(),
+                    Object::Factory::FGstMyPlaginAudio().createGstElement());
 }

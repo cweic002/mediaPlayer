@@ -1,9 +1,6 @@
 #pragma once
 #include "interface/iVideoPlayer/iVideoPlayer.h"
-#include "interface/iFactory/iFGstElementSrc/iFGstElementSrc.h"
-#include "interface/iFactory/iFGstElementDecodebin/iFGstElementDecodebin.h"
-#include "interface/iFactory/iFGstElementAudio/iFGstElementAudio.h"
-#include "interface/iFactory/iFGstElementVideo/iFGstElementVideo.h"
+#include "gst/video/videooverlay.h"
 
 #include <gst/gst.h>
 #include <QTimer>
@@ -15,7 +12,7 @@ namespace Object {
         GstElement * src;
         GstElement * decodebin;
         GstElement * audio;
-        GstElement * video;
+        GstVideoOverlay * video;
         GstBus * bus;
         QTimer timer;
         GstState state;
@@ -30,10 +27,10 @@ namespace Object {
             AccessDeniedError,
             ServiceMissingError
         };
-        explicit VideoPlayer(Interface::Factory::IFGstElementSrc * gstElementSrc,
-                             Interface::Factory::IFGstElementDecodebin * gstElementDecodebin,
-                             Interface::Factory::IFGstElementVideo * gstElementVideo,
-                             Interface::Factory::IFGstElementAudio * gstElementAudio,
+        explicit VideoPlayer(GstElement * gstElementSrc,
+                             GstElement * gstElementDecodebin,
+                             GstVideoOverlay * gstElementVideo,
+                             GstElement * gstElementAudio,
                              QWidget *parent = nullptr);
         ~VideoPlayer();
         void busUpdate();

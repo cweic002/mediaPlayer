@@ -6,8 +6,8 @@
 constexpr std::chrono::milliseconds updatetBusTimerInterval = std::chrono::milliseconds(100);
 
 void Object::VideoPlayer::pad_added_handler(GstElement *, GstPad *new_pad, Object::VideoPlayer * videoPlayer){
-    GstPad *sink_pad_video = gst_element_get_static_pad(videoPlayer->video,"video_sink");
-    GstPad *sink_pad_subtitle = gst_element_get_static_pad(videoPlayer->video,"subtitle_sink");
+    GstPad *sink_pad_video = gst_element_get_static_pad(GST_ELEMENT(videoPlayer->video),"video_sink");
+    GstPad *sink_pad_subtitle = gst_element_get_static_pad(GST_ELEMENT(videoPlayer->video),"subtitle_sink");
     GstPad *sink_pad_audio = gst_element_get_static_pad(videoPlayer->audio,"sink");
     GstCaps *new_pad_caps = NULL;
     GstStructure *new_pad_struct = NULL;
@@ -21,7 +21,8 @@ void Object::VideoPlayer::pad_added_handler(GstElement *, GstPad *new_pad, Objec
         if(!gst_pad_is_linked(sink_pad) && g_str_has_prefix(new_pad_type, prefix)){
             GstPadLinkReturn ret = gst_pad_link(new_pad, sink_pad);
             if (!GST_PAD_LINK_FAILED (ret))
-                g_print ("Link succeeded (type '%s').\n", new_pad_type);
+                // g_print ("Link succeeded (type '%s').\n", new_pad_type);
+                qDebug()<<"Link succeeded (type'"<<new_pad_type<<"')."<<Qt::endl;
         }
     };
 
@@ -55,7 +56,7 @@ void Object::VideoPlayer::handle_message(GstBus* bus, GstMessage* message){
     case GST_MESSAGE_BUFFERING: {
         gint percent = 0;
         gst_message_parse_buffering(message, &percent);
-        g_print("Buffering (%u percent done)", percent);
+        // g_print("Buffering (%u percent done)", percent);
         break;
     }
     case GST_MESSAGE_STATE_CHANGED:{
@@ -112,18 +113,20 @@ void Object::VideoPlayer::handle_message(GstBus* bus, GstMessage* message){
     gst_message_unref(message);
 }
 
-Object::VideoPlayer::VideoPlayer(Interface::Factory::IFGstElementSrc * gstElementSrc,
-                                 Interface::Factory::IFGstElementDecodebin * gstElementDecodebin,
-                                 Interface::Factory::IFGstElementVideo * gstElementVideo,
-                                 Interface::Factory::IFGstElementAudio * gstElementAudio,
-                                 QWidget *parent):QObject(parent),state(GST_STATE_NULL){
-    videoPlayer = gst_pipeline_new("videoPlayer");
-    src = gstElementSrc->createGstElement();//gst_element_factory_make ("filesrc",NULL);
-    decodebin = gstElementDecodebin->createGstElement();// gst_element_factory_make("decodebin",NULL);
-    video = gstElementVideo->createGstElement();//gst_element_factory_make("myVideo","video");
-    audio = gstElementAudio->createGstElement();//gst_element_factory_make("audio","audio");
+Object::VideoPlayer::VideoPlayer(GstElement * gstElementSrc,
+                                 GstElement * gstElementDecodebin,
+                                 GstVideoOverlay * gstElementVideo,
+                                 GstElement * gstElementAudio,
+                                 QWidget *parent):QObject(parent),
+                                                videoPlayer(gst_pipeline_new("videoPlayer")),
+                                                src(gstElementSrc),
+                                                decodebin(gstElementDecodebin),
+                                                audio(gstElementAudio),
+                                                video(gstElementVideo),
+                                                state(GST_STATE_NULL){
     if(videoPlayer && src && decodebin && video && audio){
-        gst_bin_add_many(GST_BIN(videoPlayer),src,decodebin,video,audio,nullptr);
+        gst_element_set_name(src,"filesrc");
+        gst_bin_add_many(GST_BIN(videoPlayer),src,decodebin,GST_ELEMENT(video),audio,nullptr);
         gst_element_link(src,decodebin);
 
         this->bus = gst_element_get_bus(videoPlayer);
@@ -188,7 +191,7 @@ void Object::VideoPlayer::setMedia(const QString & path){
 }
 
 void Object::VideoPlayer::setVideoOutput(QWidget * output){
-    gst_video_overlay_set_window_handle(GST_VIDEO_OVERLAY(this->video),output->winId());
+    gst_video_overlay_set_window_handle(this->video,output->winId());
 }
 
 gint64 Object::VideoPlayer::getDuration(){

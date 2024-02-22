@@ -1,10 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(objectVideoPlayer)
-
-add_library(objectVideoPlayer
-"videoPlayer.h"
-"videoPlayer.cpp")
+project(iFGstVideoOverlay VERSION 0.1 LANGUAGES CXX)
+add_library(iFGstVideoOverlay "iFGstVideoOverlay.h")
 
 find_package(PkgConfig)
 
@@ -16,12 +13,7 @@ macro(find_gstreamer_component prefix pkg lib)
   mark_as_advanced(${prefix}_LIBRARIES gstreamer_LIBRARIES gstreamer_INCLUDE_DIRS)
 endmacro()
 
-find_gstreamer_component(glib glib-2.0 glib-2.0)
-find_gstreamer_component(gstgobject gobject-2.0 gobject-2.0)
 find_gstreamer_component(gstvideo gstreamer-video-1.0 gstvideo-1.0)
 
-target_include_directories(objectVideoPlayer PUBLIC ${gstreamer_INCLUDE_DIRS})
-target_link_libraries(objectVideoPlayer PRIVATE ${gstreamer_LIBRARIES})
-
-target_link_libraries(objectVideoPlayer PUBLIC iVideoPlayer)
-target_include_directories(objectVideoPlayer PUBLIC ${videoPlayerApp_SOURCE_DIR})
+target_include_directories(iFGstVideoOverlay PUBLIC ${gstreamer_INCLUDE_DIRS})
+target_link_libraries(iFGstVideoOverlay PRIVATE ${gstreamer_LIBRARIES})

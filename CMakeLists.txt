@@ -2,15 +2,15 @@ cmake_minimum_required(VERSION 3.5)
 
 project(videoPlayerApp VERSION 0.1 LANGUAGES CXX)
 
-# find_package(PkgConfig)
+find_package(PkgConfig)
 
-# macro(find_gstreamer_component prefix pkg lib)
-#   pkg_check_modules(PC_${prefix} REQUIRED ${pkg})
-#   find_library(${prefix}_LIBRARIES NAMES ${lib} HINTS ${PC_${prefix}_LIBRARY_DIRS} ${PC_${prefix}_LIBDIR})
-#   list(APPEND gstreamer_INCLUDE_DIRS ${PC_${prefix}_INCLUDE_DIRS})
-#   list(APPEND gstreamer_LIBRARIES ${${prefix}_LIBRARIES})
-#   mark_as_advanced(${prefix}_LIBRARIES gstreamer_LIBRARIES gstreamer_INCLUDE_DIRS)
-# endmacro()
+macro(find_gstreamer_component prefix pkg lib)
+  pkg_check_modules(PC_${prefix} REQUIRED ${pkg})
+  find_library(${prefix}_LIBRARIES NAMES ${lib} HINTS ${PC_${prefix}_LIBRARY_DIRS} ${PC_${prefix}_LIBDIR})
+  list(APPEND gstreamer_INCLUDE_DIRS ${PC_${prefix}_INCLUDE_DIRS})
+  list(APPEND gstreamer_LIBRARIES ${${prefix}_LIBRARIES})
+  mark_as_advanced(${prefix}_LIBRARIES gstreamer_LIBRARIES gstreamer_INCLUDE_DIRS)
+endmacro()
 
 # find_gstreamer_component(gst      gstreamer-1.0       gstreamer-1.0)
 # find_gstreamer_component(glib glib-2.0 glib-2.0)
@@ -20,9 +20,9 @@ project(videoPlayerApp VERSION 0.1 LANGUAGES CXX)
 #find_gstreamer_component(gstbase  gstreamer-base-1.0  gstbase-1.0)
 #find_gstreamer_component(gstapp   gstreamer-app-1.0   gstapp-1.0)
 #find_gstreamer_component(gstvideo gstreamer-video-1.0 gstvideo-1.0)
-#find_gstreamer_component(glib glib-2.0 glib-2.0)
+# find_gstreamer_component(glib glib-2.0 glib-2.0)
 #find_gstreamer_component(gstgobject gobject-2.0 gobject-2.0)
-#find_gstreamer_component(gthread gstreamer-1.0 gthread-2.0)
+find_gstreamer_component(gthread gstreamer-1.0 gthread-2.0)
 #find_gstreamer_component(gstaudio gstreamer-audio-1.0 gstaudio-1.0)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -100,11 +100,9 @@ set_target_properties(videoPlayerApp PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-target_link_libraries(videoPlayerApp PUBLIC objectVideoPlayer)
+target_link_libraries(videoPlayerApp PUBLIC objectFVideoPlayer)
 target_link_libraries(videoPlayerApp PUBLIC widgetBotomMenuPlayer)
 target_link_libraries(videoPlayerApp PUBLIC widgetContexMenu)
-
-target_link_libraries(videoPlayerApp PUBLIC objectFVideoPlayer)
 
 include(GNUInstallDirs)
 install(TARGETS videoPlayerApp
