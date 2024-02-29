@@ -2,25 +2,26 @@
 #include <QCursor>
 #include "widget/contexMenu/contexMenu.h"
 
-template<typename VideoPlayer,typename BotomMenuPlayer,typename ConnectFunc>
-QtVideo::QtVideo(QApplication * app,VideoPlayer * videoPlayer,BotomMenuPlayer botomMenuPlayer,ConnectFunc connectFunc,QWidget *parent):QMainWindow(parent),
-    _app(app),
-    _videoPlayer(videoPlayer),
-    _botomMenuPlayer(botomMenuPlayer),
-    _context_menu(new Widget::ContexMenu(this)),
-    _boolFullScreen(false)
+template<typename VideoPlayer,typename BotomMenuPlayer>
+QtVideo::QtVideo(QApplication * app,VideoPlayer * videoPlayer,BotomMenuPlayer botomMenuPlayer,QWidget * parent):QMainWindow(parent),
+    app_(app),
+    videoPlayer_(videoPlayer),
+    botomMenuPlayer_(botomMenuPlayer),
+    contextMenu_(new Widget::ContexMenu(this)),
+    boolFullScreen_(false)
 {
-    _ui.setupUi(this);
-    botomMenuPlayer->setParent(_ui.centralWidget);
-    botomMenuPlayer->setObjectName("botomMenuPlayer");
-    _ui.gridLayout->addWidget(botomMenuPlayer, 1, 1, 1, 1, Qt::AlignBottom);
+    ui_.setupUi(this);
+    botomMenuPlayer_->setParent(ui_.centralWidget);
+    botomMenuPlayer_->setObjectName("botomMenuPlayer");
+    ui_.gridLayout->addWidget(botomMenuPlayer, 1, 1, 1, 1, Qt::AlignBottom);
     QSizePolicy sizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
     sizePolicy.setHorizontalStretch(0);
     sizePolicy.setVerticalStretch(0);
     sizePolicy.setHeightForWidth(botomMenuPlayer->sizePolicy().hasHeightForWidth());
-    botomMenuPlayer->setSizePolicy(sizePolicy);
-    videoPlayer->setVideoOutput(_ui.display);
-    connectFunc(videoPlayer,botomMenuPlayer);
-
-    QObject::connect(this,&QtVideo::fileNameChanged,videoPlayer,&VideoPlayer::setMedia);
+    botomMenuPlayer_->setSizePolicy(sizePolicy);
+    videoPlayer_->setVideoOutput(ui_.display);
+    connectVideoPlayerBotomMenuPlayer(videoPlayer,botomMenuPlayer);
+    QObject::connect(this,&QtVideo::fileNameChanged,[videoPlayer = videoPlayer](QString & file){
+        videoPlayer->setMedia(file);
+    });
 }

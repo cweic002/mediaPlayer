@@ -8,13 +8,13 @@ QtVideo::~QtVideo(){}
 void QtVideo::changeEvent(QEvent* pe)
 {
     if (pe->type() == QEvent::LanguageChange){
-        _ui.retranslateUi(this);
+        ui_.retranslateUi(this);
     }
     QWidget::changeEvent(pe);
 }
 
 void QtVideo::contextMenuEvent(QContextMenuEvent * pe){
-    _context_menu->exec(pe->globalPos());
+    contextMenu_->exec(pe->globalPos());
 }
 
 //menu
@@ -28,7 +28,9 @@ void QtVideo::on_openFille_triggered(){
     if(!path.isEmpty())
     {
         emit fileNameChanged(path);
-        _videoPlayer->play();
+        videoPlayer_->play();
+        auto volume = botomMenuPlayer_->getVolume();
+        videoPlayer_->setVolume(volume);
         //set path
         // videoPlayer->setMedia(pat);
         // //play
@@ -42,11 +44,11 @@ void QtVideo::on_openFille_triggered(){
 //mouseDoubleClickEvent
 void QtVideo::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    _boolFullScreen = !_boolFullScreen;
-    if(_boolFullScreen){
+    boolFullScreen_ = !boolFullScreen_;
+    if(boolFullScreen_){
        this->QMainWindow::showFullScreen();
     }else{
         this->QMainWindow::showNormal();
     }
-    emit signalFullScreen(_boolFullScreen);
+    emit signalFullScreen(boolFullScreen_);
 }

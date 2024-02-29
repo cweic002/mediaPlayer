@@ -12,7 +12,7 @@ macro(find_gstreamer_component prefix pkg lib)
   mark_as_advanced(${prefix}_LIBRARIES gstreamer_LIBRARIES gstreamer_INCLUDE_DIRS)
 endmacro()
 
-# find_gstreamer_component(gst      gstreamer-1.0       gstreamer-1.0)
+#find_gstreamer_component(gst      gstreamer-1.0       gstreamer-1.0)
 # find_gstreamer_component(glib glib-2.0 glib-2.0)
 # find_gstreamer_component(gstgobject gobject-2.0 gobject-2.0)
 # find_gstreamer_component(gthread gstreamer-1.0 gthread-2.0)
@@ -20,7 +20,7 @@ endmacro()
 #find_gstreamer_component(gstbase  gstreamer-base-1.0  gstbase-1.0)
 #find_gstreamer_component(gstapp   gstreamer-app-1.0   gstapp-1.0)
 #find_gstreamer_component(gstvideo gstreamer-video-1.0 gstvideo-1.0)
-# find_gstreamer_component(glib glib-2.0 glib-2.0)
+#find_gstreamer_component(glib glib-2.0 glib-2.0)
 #find_gstreamer_component(gstgobject gobject-2.0 gobject-2.0)
 find_gstreamer_component(gthread gstreamer-1.0 gthread-2.0)
 #find_gstreamer_component(gstaudio gstreamer-audio-1.0 gstaudio-1.0)
@@ -100,7 +100,7 @@ set_target_properties(videoPlayerApp PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-target_link_libraries(videoPlayerApp PUBLIC objectFVideoPlayer)
+target_link_libraries(videoPlayerApp PUBLIC objectFGstVideoPlayer)
 target_link_libraries(videoPlayerApp PUBLIC widgetBotomMenuPlayer)
 target_link_libraries(videoPlayerApp PUBLIC widgetContexMenu)
 

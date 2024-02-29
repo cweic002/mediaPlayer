@@ -1,13 +1,13 @@
 #include "contexMenu.h"
 #include "ui_contexMenu.h"
 
-Widget::ContexMenu::ContexMenu(QWidget *parent):QMenu(parent),ui(new Ui::ContexMenu)
+Widget::ContexMenu::ContexMenu(QWidget *parent):QMenu(parent),ui_(new Ui::ContexMenu)
 {
     QWidget::setParent(parent);
-    ui->setupUi(this);
+    ui_->setupUi(this);
 }
 
 Widget::ContexMenu::~ContexMenu()
 {
-    delete ui;
+    delete ui_;
 }

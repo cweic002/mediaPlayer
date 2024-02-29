@@ -12,7 +12,7 @@ namespace Widget {
         explicit ContexMenu(QWidget *parent = nullptr);
         virtual ~ContexMenu();
     private:
-        Ui::ContexMenu *ui;
+        Ui::ContexMenu *ui_;
     };
 }
 

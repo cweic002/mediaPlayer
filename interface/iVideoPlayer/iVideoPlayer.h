@@ -1,10 +1,17 @@
 #pragma once
-#include "interface/iPlayer/iPlayer.h"
-#include "interface/iAudio/iAudio.h"
-#include "interface/iVideoOutput/iVideoOutput.h"
+#include "interface/iAudioPlayer/iAudioPlayer.h"
+#include <QWidget>
 
 namespace Interface{
-    struct IVideoPlayer : public Interface::IPlayer, public Interface::IAudio,public Interface::IVideoOutput{
+/**
+ * @brief Basic interface for creating a video player
+ */
+struct IVideoPlayer : virtual public IAudioPlayer{
         virtual ~IVideoPlayer() = default;
+        /**
+         * @brief sets the widget object for the video overlay
+         * @param the widget will be used to display video images
+        */
+        virtual void setVideoOutput(QWidget * output) = 0;
     };
 }

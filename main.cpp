@@ -4,10 +4,10 @@
 #include <gst/gst.h>
 
 #include "widget/botomMenu/botomMenuPlayer/botomMenuPlayer.h"
-#include "object/factory/fVideoPlayer/fVideoPlayer.h"
+#include "object/factory/fGstVideoPlayer/fGstVideoPlayer.h"
 #include <QMessageBox>
 
-void connectVideoPlayerBotomMenuPlayer(Object::VideoPlayer * videoPlayer,Widget::BotomMenuPlayer * botomMenuPlayer){
+void connectVideoPlayerBotomMenuPlayer(Object::GstVideoPlayer * videoPlayer,Widget::BotomMenuPlayer * botomMenuPlayer){
     QObject::connect(botomMenuPlayer,&Interface::IBotomMenuPlayer::playPauseChanged,botomMenuPlayer,[videoPlayer](bool play){
         if(play){
             videoPlayer->play();
@@ -15,35 +15,41 @@ void connectVideoPlayerBotomMenuPlayer(Object::VideoPlayer * videoPlayer,Widget:
             videoPlayer->pause();
         }
     });
-    QObject::connect(botomMenuPlayer,&Interface::IBotomMenuPlayer::mutedChanged,videoPlayer,&Object::VideoPlayer::setMuted);
-    QObject::connect(botomMenuPlayer,&Interface::IBotomMenuPlayer::positionChanged,videoPlayer,&Object::VideoPlayer::setPosition);
-    QObject::connect(botomMenuPlayer,&Interface::IBotomMenuPlayer::volumeChanged,videoPlayer,&Object::VideoPlayer::setVolume);
-    QObject::connect(videoPlayer,&Object::VideoPlayer::stateChanged,videoPlayer,[botomMenuPlayer](Object::VideoPlayer::State state){
+    QObject::connect(botomMenuPlayer,&Interface::IBotomMenuPlayer::mutedChanged,[videoPlayer](bool muted){
+        videoPlayer->setMuted(muted);
+    });
+    QObject::connect(botomMenuPlayer,&Interface::IBotomMenuPlayer::positionChanged,[videoPlayer](long long int position){
+        videoPlayer->setPosition(position);
+    });
+    QObject::connect(botomMenuPlayer,&Interface::IBotomMenuPlayer::volumeChanged,[videoPlayer](double volume){
+        videoPlayer->setVolume(volume);
+    });
+    QObject::connect(videoPlayer,&Object::GstVideoPlayer::stateChanged,videoPlayer,[botomMenuPlayer](Object::GstVideoPlayer::State state){
         switch(state){
-        case Object::VideoPlayer::State::PlayingState : {
+        case Object::GstVideoPlayer::State::PlayingState : {
             botomMenuPlayer->play();
             break;
         }
-        case Object::VideoPlayer::State::PausedState : {
+        case Object::GstVideoPlayer::State::PausedState : {
             botomMenuPlayer->pause();
             break;
         }
-        case Object::VideoPlayer::State::StoppedState : {
+        case Object::GstVideoPlayer::State::StoppedState : {
             botomMenuPlayer->stop();
             break;
         }
         }
     });
-    QObject::connect(videoPlayer,&Object::VideoPlayer::mediaStatusChanged,videoPlayer,[videoPlayer,botomMenuPlayer](Object::VideoPlayer::MediaStatus mediaStatus){
+    QObject::connect(videoPlayer,&Object::GstVideoPlayer::mediaStatusChanged,videoPlayer,[videoPlayer,botomMenuPlayer](Object::GstVideoPlayer::MediaStatus mediaStatus){
         switch(mediaStatus){
-        case Object::VideoPlayer::MediaStatus::UnknownMediaStatus :
-        case Object::VideoPlayer::MediaStatus::NoMedia:
-        case Object::VideoPlayer::MediaStatus::InvalidMedia :{
+        case Object::GstVideoPlayer::MediaStatus::UnknownMediaStatus :
+        case Object::GstVideoPlayer::MediaStatus::NoMedia:
+        case Object::GstVideoPlayer::MediaStatus::InvalidMedia :{
             videoPlayer->stop();
             botomMenuPlayer->setActivate(false);
             break;
         }
-        case Object::VideoPlayer::MediaStatus::EndOfMedia : {
+        case Object::GstVideoPlayer::MediaStatus::EndOfMedia : {
             videoPlayer->pause();
             break;
         }
@@ -53,9 +59,10 @@ void connectVideoPlayerBotomMenuPlayer(Object::VideoPlayer * videoPlayer,Widget:
         }
         }
     });
-    QObject::connect(videoPlayer,&Object::VideoPlayer::durationChanged,botomMenuPlayer,&Interface::IBotomMenuPlayer::setDuration);
-    QObject::connect(videoPlayer,&Object::VideoPlayer::positionChanged,botomMenuPlayer,&Interface::IBotomMenuPlayer::setPosition);
+    QObject::connect(videoPlayer,&Object::GstVideoPlayer::durationChanged,botomMenuPlayer,&Interface::IBotomMenuPlayer::setDuration);
+    QObject::connect(videoPlayer,&Object::GstVideoPlayer::positionChanged,botomMenuPlayer,&Interface::IBotomMenuPlayer::setPosition);
 }
+
 
 int main(int argc, char* argv[]) {
     if (!g_thread_supported())
@@ -74,12 +81,11 @@ int main(int argc, char* argv[]) {
     }
     app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
     try{
-        Object::VideoPlayer * videoPlayer = Object::Factory::FVideoPlayer().createIVideoPlayer();
+        auto * videoPlayer = Object::Factory::FGstVideoPlayer().createIVideoPlayer();
         Widget::BotomMenuPlayer * botomMenuPlayer = new Widget::BotomMenuPlayer();
         QtVideo window(&app,
                        videoPlayer,
-                       botomMenuPlayer,
-                       connectVideoPlayerBotomMenuPlayer);
+                       botomMenuPlayer);
         window.show();
         return app.exec();
     }catch (const std::exception& err){

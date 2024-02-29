@@ -9,8 +9,9 @@ class BotomMenuPlayer;
 namespace Widget {
     class BotomMenuPlayer : public Interface::IBotomMenuPlayer{
         Q_OBJECT
-        long long int duration;
+        long long int duration_;
         void setPositionTimer(long long int position);
+        Ui::BotomMenuPlayer *ui_;
     public:
         explicit BotomMenuPlayer(QWidget *parent = nullptr);
         ~BotomMenuPlayer();
@@ -25,8 +26,6 @@ namespace Widget {
     signals:
         void offActivate();
         void onActivate();
-    private:
-        Ui::BotomMenuPlayer *ui;
     };
 }
 
